@@ -11,7 +11,7 @@ or
 npm run deploy-production
 ```
 ### Environment
-```json
+```
 node v14.17.5
 nvm v6.14.14
 ```
