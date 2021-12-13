@@ -28,10 +28,6 @@ router.post('/import/list',
     async (req: Request, res: Response, next: NextFunction) => {
     const request: MovieImportListRequest = req.body;
     const response: MovieImportListResponse = await Movie.importList(request);
-    for (let n = request.command.curPage+1; n <= 856; n++) {
-        request.command.curPage = n;
-        await Movie.importList(request);
-    }
     return res.status(200).json(response);
 });
 
