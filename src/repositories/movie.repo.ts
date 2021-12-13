@@ -1,17 +1,23 @@
-interface MovieListResponse extends DefaultResponse {
+interface MovieGetListResponse extends DefaultResponse {
     command: {
         movies: MovieDto[]
     };
 }
 
-interface MovieGetListRequest extends DefaultRequest {
+interface MovieSearchResponse extends DefaultResponse {
     command: {
-        movieCd: string
-    }
-}
-
-interface MovieSearchRequest extends DefaultRequest {
-    command: {
-        name: string
+        movies: MovieDto[]
     };
 }
+
+// interface MovieGetListRequest extends DefaultRequest {
+//     command: {
+//         movieCd: string
+//     }
+// }
+//
+// interface MovieSearchRequest extends DefaultRequest {
+//     command: {
+//         movieNm: string
+//     };
+// }

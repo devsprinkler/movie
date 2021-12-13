@@ -1,9 +1,9 @@
 interface MovieDto {
-    movieCd: string,
+    movieCd: number,
     movieNm: string,
     movieNmEn: string,
-    prdtYear: string,
-    openDt: string,
+    prdtYear: number,
+    openDt: number,
     typeNm: string,
     prdtStatNm: string,
     nationAlt: string,
@@ -11,8 +11,26 @@ interface MovieDto {
     repNationNm: string,
     repGenreNm: string,
     directors: string,
-    peopleNm: string,
-    companys: string,
-    companyCd: string,
-    companyNm: string
+    companies: string
+}
+
+interface MovieApiVo {
+    movieCd: number,
+    movieNm: string,
+    movieNmEn: string,
+    prdtYear: number,
+    openDt: number,
+    typeNm: string,
+    prdtStatNm: string,
+    nationAlt: string,
+    genreAlt: string,
+    repNationNm: string,
+    repGenreNm: string,
+    directors: {
+        peopleNm: string
+    }[],
+    companies: {
+        companyCd: string,
+        companyNm: string
+    }[]
 }

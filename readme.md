@@ -14,4 +14,5 @@ npm run deploy-production
 ```
 node v14.17.5
 nvm v6.14.14
+mysql v5.7.36
 ```

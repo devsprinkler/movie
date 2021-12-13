@@ -1,9 +1,12 @@
 import 'dotenv';
 import express, { Request, Response } from 'express';
 import morgan from 'morgan';
-import { logger } from './utils/logger';
+import mysql from 'mysql2/promise';
+import { Config } from './config/config';
+import { logger } from './utils/logger/logger';
 import router from './routes';
 
+export const mysqlPool: mysql.Pool = mysql.createPool(Config.Env.MySql.PROJECT);
 export const app = express();
 app.use(morgan('short'));
 app.use(router);

@@ -5,6 +5,7 @@ enum ErrorCode {
     INTERNAL_SERVER_ERROR = 500,
 
     // Error code
-    DB_FAILED = 1000,
-    CONTENT_NOTFOUND = 1001,
+    DB_CONN_FAILED = 1000,
+    DB_QUERY_FAILED = 1001,
+    CONTENT_NOTFOUND = 2000,
 }
