@@ -37,7 +37,7 @@ interface MovieImportListRequest extends DefaultRequest {
 
 interface MovieImportDetailRequest extends DefaultRequest {
     command: {
-        movieCd: number
+        movieCd: string
     }
 }
 

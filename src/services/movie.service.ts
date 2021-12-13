@@ -4,6 +4,7 @@ import { MySql } from "../utils/database/mysql";
 import axios from "axios";
 import { logger } from "../utils/logger/logger";
 import { ErrorCode } from '../const/errorcode';
+import {Blob} from "buffer";
 
 export default class Movie {
     public static async getList
@@ -73,7 +74,7 @@ export default class Movie {
     }
 
     public static async getDetail
-    (movieCd: number): Promise<MovieGetDetailResponse> {
+    (movieCd: string): Promise<MovieGetDetailResponse> {
         let response: MovieGetDetailResponse;
         const sql: string = promiseMysql.format(`
             SELECT movie_cd as movieCd, movie_nm as movieNm,
@@ -89,11 +90,13 @@ export default class Movie {
         `, [movieCd]);
         const sqlResults: SqlResults = await MySql.query(sql);
         if (sqlResults.code === MySql.Const.SUCCESS) {
-            const movie: MovieDetailDto[] = sqlResults.data[0];
+            const movie: MovieDetailDto = sqlResults.data[0];
+            movie.actors = `${movie.actors}`;
+            movie.staffs = `${movie.staffs}`;
             response = {
                 status: ErrorCode.OK,
                 command: {
-                    movie: movie[0]
+                    movie: movie
                 }
             };
             return response;
@@ -146,9 +149,17 @@ export default class Movie {
                 const sqlResults: SqlResults = await MySql.query(sql);
                 if (sqlResults.code === MySql.Const.FAIL) {
                     logger.error(`insert failed - ${JSON.stringify(movie)}`);
+                    response = {
+                        status: ErrorCode.DB_QUERY_FAILED,
+                        command: {
+                            message: 'db failed'
+                        }
+                    };
+                    return response;
                 }
             }
         } catch(err) {
+            logger.error(err);
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
@@ -169,10 +180,56 @@ export default class Movie {
     public static async importDetail
     (request: MovieImportDetailRequest): Promise<MovieImportDetailResponse> {
         let response: MovieImportDetailResponse;
+        let host: string = process.env.KOFIC_APIHOST as string;
+        host += '/movie/searchMovieInfo.json';
+        host += `?key=${process.env.KOFIC_APIKEY as string}`;
+        host += `&movieCd=${request.command.movieCd as string}`;
+        const apiResponse: any = await axios.get(host);
+        const detail: MovieDetailApiVo =
+            apiResponse.data.movieInfoResult.movieInfo;
+        try {
+            const sql: string = promiseMysql.format(`
+                UPDATE mymoviedb.tb_movies
+                SET movie_nm_og = ?, show_tm = ?, nations = ?, genres = ?,
+                directors = ?, actors = ?, companies = ?, audits = ?, staffs = ?
+                WHERE movie_cd = ?
+            `, [
+                detail.movieNmOg,
+                Number(detail.showTm),
+                JSON.stringify(detail.nations),
+                JSON.stringify(detail.genres),
+                JSON.stringify(detail.directors),
+                JSON.stringify(detail.actors),
+                JSON.stringify(detail.companys),
+                JSON.stringify(detail.audits),
+                JSON.stringify(detail.staffs),
+                detail.movieCd
+            ]);
+            const sqlResults: SqlResults = await MySql.query(sql);
+            if (sqlResults.code === MySql.Const.FAIL) {
+                logger.error(`insert failed - ${JSON.stringify(detail)}`);
+                response = {
+                    status: ErrorCode.DB_QUERY_FAILED,
+                    command: {
+                        message: 'db failed'
+                    }
+                };
+                return response;
+            }
+        } catch(err) {
+            logger.error(err);
+            response = {
+                status: ErrorCode.DB_QUERY_FAILED,
+                command: {
+                    message: 'db failed'
+                }
+            };
+            return response;
+        }
         response = {
-            status: ErrorCode.DB_QUERY_FAILED,
+            status: ErrorCode.OK,
             command: {
-                message: 'db failed'
+                message: 'movie detail imported'
             }
         };
         return response;

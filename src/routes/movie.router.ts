@@ -19,7 +19,7 @@ router.get('/search/:movieNm',
 
 router.get('/detail/:movieCd',
     async (req: Request, res: Response, next: NextFunction) => {
-    const movieCd: number = Number(req.params.movieCd);
+    const movieCd: string = req.params.movieCd as string;
     const response: MovieGetDetailResponse = await Movie.getDetail(movieCd);
     return res.status(200).json(response);
 });

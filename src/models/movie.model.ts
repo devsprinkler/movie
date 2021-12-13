@@ -48,11 +48,11 @@ interface MovieDetailDto {
     nations: string,
     genres: string,
     directors: string,
-    actors: string,
+    actors: any,
     companies: string,
     showTypes: string,
     audits: string,
-    staffs: string
+    staffs: any
 }
 
 interface MovieDetailApiVo {
