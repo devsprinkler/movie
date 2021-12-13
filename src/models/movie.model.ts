@@ -34,3 +34,23 @@ interface MovieApiVo {
         companyNm: string
     }[]
 }
+
+interface MovieDetailDto {
+    movieCd: number,
+    movieNm: string,
+    movieNmEn: string,
+    movieNmOg: string,
+    prdtYear: number,
+    showTm: number,
+    openDt: number,
+    typeNm: string,
+    prdtStatNm: string,
+    nations: string,
+    genres: string,
+    directors: string,
+    actors: string,
+    companies: string,
+    showTypes: string,
+    audits: string,
+    staffs: string
+}
