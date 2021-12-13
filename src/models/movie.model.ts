@@ -1,5 +1,5 @@
 interface MovieDto {
-    movieCd: number,
+    movieCd: string,
     movieNm: string,
     movieNmEn: string,
     prdtYear: number,
@@ -14,12 +14,12 @@ interface MovieDto {
     companies: string
 }
 
-interface MovieApiVo {
-    movieCd: number,
+interface MovieListApiVo {
+    movieCd: string,
     movieNm: string,
     movieNmEn: string,
-    prdtYear: number,
-    openDt: number,
+    prdtYear: string,
+    openDt: string,
     typeNm: string,
     prdtStatNm: string,
     nationAlt: string,
@@ -29,14 +29,14 @@ interface MovieApiVo {
     directors: {
         peopleNm: string
     }[],
-    companies: {
+    companys: {
         companyCd: string,
         companyNm: string
     }[]
 }
 
 interface MovieDetailDto {
-    movieCd: number,
+    movieCd: string,
     movieNm: string,
     movieNmEn: string,
     movieNmOg: string,
@@ -53,4 +53,47 @@ interface MovieDetailDto {
     showTypes: string,
     audits: string,
     staffs: string
+}
+
+interface MovieDetailApiVo {
+    movieCd: string,
+    movieNm: string,
+    movieNmEn: string,
+    movieNmOg: string,
+    showTm: string,
+    prdtYear: number,
+    openDt: number,
+    prdtStatNm: string,
+    typeNm: string,
+    nations: {
+        nationsNm: string
+    }[],
+    genres: {
+        genreNm: string
+    }[],
+    directors: {
+        peopleNm: string,
+        peopleNmEn: string
+    }[],
+    actors: {
+        peopelNm: string,
+        peopleNmEn: string,
+        cast: string,
+        castEn: string
+    }[],
+    companys: {
+        companyCd: string,
+        companyNm: string,
+        companyNmEn: string,
+        companyPartNm: string
+    }[],
+    audits: {
+       auditNo: string,
+       watchGradeNm: string
+    }[],
+    staffs: {
+        peopleNm: string,
+        peopleNmEn: string,
+        staffRoleNm: string
+    }[]
 }

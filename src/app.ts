@@ -1,14 +1,21 @@
-import 'dotenv';
-import express, { Request, Response } from 'express';
-import morgan from 'morgan';
+import 'dotenv/config';
+import express, {json, Request, Response} from 'express';
+import morgan, {StreamOptions} from 'morgan';
 import mysql from 'mysql2/promise';
 import { Config } from './config/config';
 import { logger } from './utils/logger/logger';
 import router from './routes';
+import { ErrorCode } from "./const/errorcode";
 
 export const mysqlPool: mysql.Pool = mysql.createPool(Config.Env.MySql.PROJECT);
 export const app = express();
-app.use(morgan('short'));
+
+const stream: StreamOptions = {
+    // Use the http severity
+    write: (message) => logger.http(message),
+};
+app.use(json());
+app.use(morgan("short", { stream }));
 app.use(router);
 
 // health check
