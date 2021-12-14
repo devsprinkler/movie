@@ -4,7 +4,6 @@ import { MySql } from "../utils/database/mysql";
 import axios from "axios";
 import { logger } from "../utils/logger/logger";
 import { ErrorCode } from '../const/errorcode';
-import {Blob} from "buffer";
 
 export default class Movie {
     public static async getList

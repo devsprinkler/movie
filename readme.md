@@ -16,3 +16,10 @@ node v14.17.5
 nvm v6.14.14
 mysql v5.7.36
 ```
+
+### APIs
+```
+[GET] /movie/list/:movieCd
+[GET] /movie/search/:movieNm
+[GET] /movie/detail/:movieCd
+```
