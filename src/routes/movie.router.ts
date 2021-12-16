@@ -5,7 +5,7 @@ const router = Router();
 
 router.get('/list/:movieCd',
     async (req: Request, res: Response, next: NextFunction) => {
-    const movieCd: number = Number(req.params.movieCd);
+    const movieCd: string = req.params.movieCd as string;
     const response: MovieGetListResponse = await Movie.getList(movieCd);
     return res.status(200).json(response);
 });

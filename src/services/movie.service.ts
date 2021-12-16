@@ -7,7 +7,7 @@ import { ErrorCode } from '../const/errorcode';
 
 export default class Movie {
     public static async getList
-    (movieCd: number): Promise<MovieGetListResponse> {
+    (movieCd: string): Promise<MovieGetListResponse> {
         let response: MovieGetListResponse;
         const sql: string = promiseMysql.format(`
             SELECT movie_cd as movieCd, movie_nm as movieNm,
