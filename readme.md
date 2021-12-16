@@ -22,4 +22,8 @@ mysql v5.7.36
 [GET] /movie/list/:movieCd
 [GET] /movie/search/:movieNm
 [GET] /movie/detail/:movieCd
+
+[GET] /company/list/:companyCd
+[GET] /company/search/:companyNm
+[GET] /company/detail/:companyCd
 ```
