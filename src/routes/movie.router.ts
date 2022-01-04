@@ -31,6 +31,13 @@ router.post('/import/list',
     return res.status(200).json(response);
 });
 
+router.post('/import/bulk',
+    async (req: Request, res: Response, next: NextFunction) => {
+    const request: MovieBulkImportRequest = req.body;
+    const response: MovieBulkImportResponse = await Movie.bulkImport(request);
+    return res.status(200).json(response);
+});
+
 router.patch('/import/detail',
     async (req: Request, res: Response, next: NextFunction) => {
     const request: MovieImportDetailRequest = req.body;

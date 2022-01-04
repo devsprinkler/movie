@@ -6,6 +6,45 @@ import { logger } from "../utils/logger/logger";
 import { ErrorCode } from '../const/errorcode';
 
 export default class Movie {
+    private static async dbInsertMovieList
+    (list: MovieListApiVo[]): Promise<boolean> {
+        try {
+            for (let movie of list) {
+                const sql: string = promiseMysql.format(`
+                        INSERT INTO mymoviedb.tb_movies
+                        (movie_cd, movie_nm, movie_nm_en, prdt_year, open_dt, type_nm,
+                         prdt_stat_nm, nation_alt, genre_alt, rep_nation_nm,
+                         rep_genre_nm, directors, companies)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
+                        UPDATE open_dt = ?
+                    `, [
+                    movie.movieCd,
+                    movie.movieNm,
+                    movie.movieNmEn,
+                    Number(movie.prdtYear),
+                    Number(movie.openDt),
+                    movie.typeNm,
+                    movie.prdtStatNm,
+                    movie.nationAlt,
+                    movie.genreAlt,
+                    movie.repNationNm,
+                    movie.repGenreNm,
+                    JSON.stringify(movie.directors),
+                    JSON.stringify(movie.companys),
+                    Number(movie.openDt),
+                ]);
+                const sqlResults: SqlResults = await MySql.query(sql);
+                if (sqlResults.code === MySql.Const.FAIL) {
+                    logger.error(`insert failed - ${JSON.stringify(movie)}`);
+                    return false;
+                }
+            }
+        } catch(err) {
+            logger.error(err);
+            return false;
+        }
+        return true;
+    }
     public static async getList
     (movieCd: string): Promise<MovieGetListResponse> {
         let response: MovieGetListResponse;
@@ -120,45 +159,8 @@ export default class Movie {
         const apiResponse: any = await axios.get(host);
         const list: MovieListApiVo[] =
             apiResponse.data.movieListResult.movieList;
-        try {
-            for (let movie of list) {
-                const sql: string = promiseMysql.format(`
-                    INSERT INTO mymoviedb.tb_movies
-                    (movie_cd, movie_nm, movie_nm_en, prdt_year, open_dt, type_nm,
-                     prdt_stat_nm, nation_alt, genre_alt, rep_nation_nm,
-                     rep_genre_nm, directors, companies)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
-                    UPDATE open_dt = ?
-                `, [
-                    movie.movieCd,
-                    movie.movieNm,
-                    movie.movieNmEn,
-                    Number(movie.prdtYear),
-                    Number(movie.openDt),
-                    movie.typeNm,
-                    movie.prdtStatNm,
-                    movie.nationAlt,
-                    movie.genreAlt,
-                    movie.repNationNm,
-                    movie.repGenreNm,
-                    JSON.stringify(movie.directors),
-                    JSON.stringify(movie.companys),
-                    Number(movie.openDt),
-                ]);
-                const sqlResults: SqlResults = await MySql.query(sql);
-                if (sqlResults.code === MySql.Const.FAIL) {
-                    logger.error(`insert failed - ${JSON.stringify(movie)}`);
-                    response = {
-                        status: ErrorCode.DB_QUERY_FAILED,
-                        command: {
-                            message: 'db failed'
-                        }
-                    };
-                    return response;
-                }
-            }
-        } catch(err) {
-            logger.error(err);
+        const inserted: boolean = await this.dbInsertMovieList(list);
+        if (!inserted) {
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
@@ -171,6 +173,43 @@ export default class Movie {
             status: ErrorCode.OK,
             command: {
                 message: 'movie list imported'
+            }
+        };
+        return response;
+    }
+
+    public static async bulkImport
+    (request: MovieBulkImportRequest): Promise<MovieBulkImportResponse> {
+        let response: MovieImportDetailResponse;
+        let host: string = process.env.KOFIC_APIHOST as string;
+        host += '/movie/searchMovieList.json';
+        host += `?key=${process.env.KOFIC_APIKEY as string}`;
+        const apiResponse: any = await axios.get(host);
+        const cnt: number =
+            Math.ceil(apiResponse.data.movieListResult.totCnt / 100);
+        host += `&itemPerPage=100`;
+        for (let i = 1; i <= cnt; i++) {
+            console.log(`${i} / ${cnt}`);
+            let newHost = host;
+            newHost += `&curPage=${i}`;
+            const apiResponse: any = await axios.get(newHost);
+            const list: MovieListApiVo[] =
+                apiResponse.data.movieListResult.movieList;
+            const inserted: boolean = await this.dbInsertMovieList(list);
+            if (!inserted) {
+                response = {
+                    status: ErrorCode.DB_QUERY_FAILED,
+                    command: {
+                        message: 'db failed'
+                    }
+                };
+                return response;
+            }
+        }
+        response = {
+            status: ErrorCode.OK,
+            command: {
+                message: 'movie bulk imported'
             }
         };
         return response;

@@ -22,6 +22,12 @@ interface CompanyImportListResponse extends DefaultResponse {
     }
 }
 
+interface CompanyBulkImportResponse extends DefaultResponse {
+    command: {
+        message: string
+    }
+}
+
 interface CompanyImportDetailResponse extends DefaultResponse {
     command: {
         message: string
@@ -33,6 +39,10 @@ interface CompanyImportListRequest extends DefaultRequest {
         curPage: number,
         itemPerPage: number
     }
+}
+
+interface CompanyBulkImportRequest extends DefaultRequest {
+    command: {}
 }
 
 interface CompanyImportDetailRequest extends DefaultRequest {

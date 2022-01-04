@@ -6,6 +6,40 @@ import { logger } from "../utils/logger/logger";
 import { ErrorCode } from '../const/errorcode';
 
 export default class Company {
+    private static async dbInsertCompanyList
+    (list: CompanyListApiVo[]): Promise<boolean> {
+        try {
+            for (let company of list) {
+                const sql: string = promiseMysql.format(`
+                    INSERT INTO mymoviedb.tb_companies
+                    (company_cd, company_nm, company_nm_en, company_part_names,
+                     ceo_nm, filmo_names)
+                    VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
+                    UPDATE company_part_names = ?, ceo_nm = ?, filmo_names = ?
+                `, [
+                    company.companyCd,
+                    company.companyNm,
+                    company.companyNmEn,
+                    company.companyPartNames,
+                    company.ceoNm,
+                    company.filmoNames,
+                    company.companyPartNames,
+                    company.ceoNm,
+                    company.filmoNames,
+                ]);
+                const sqlResults: SqlResults = await MySql.query(sql);
+                if (sqlResults.code === MySql.Const.FAIL) {
+                    logger.error(`insert failed - ${JSON.stringify(company)}`);
+                    return false;
+                }
+            }
+        } catch(err) {
+            logger.error(err);
+            return false;
+        }
+        return true;
+    }
+
     public static async getList
     (companyCd: string): Promise<CompanyGetListResponse> {
         let response: CompanyGetListResponse;
@@ -113,39 +147,8 @@ export default class Company {
         const apiResponse: any = await axios.get(host);
         const list: CompanyListApiVo[] =
             apiResponse.data.companyListResult.companyList;
-        try {
-            for (let company of list) {
-                const sql: string = promiseMysql.format(`
-                    INSERT INTO mymoviedb.tb_companies
-                    (company_cd, company_nm, company_nm_en, company_part_names,
-                     ceo_nm, filmo_names)
-                    VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
-                    UPDATE company_part_names = ?, ceo_nm = ?, filmo_names = ?
-                `, [
-                    company.companyCd,
-                    company.companyNm,
-                    company.companyNmEn,
-                    company.companyPartNames,
-                    company.ceoNm,
-                    company.filmoNames,
-                    company.companyPartNames,
-                    company.ceoNm,
-                    company.filmoNames,
-                ]);
-                const sqlResults: SqlResults = await MySql.query(sql);
-                if (sqlResults.code === MySql.Const.FAIL) {
-                    logger.error(`insert failed - ${JSON.stringify(company)}`);
-                    response = {
-                        status: ErrorCode.DB_QUERY_FAILED,
-                        command: {
-                            message: 'db failed'
-                        }
-                    };
-                    return response;
-                }
-            }
-        } catch(err) {
-            logger.error(err);
+        const inserted: boolean = await this.dbInsertCompanyList(list);
+        if (!inserted) {
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
@@ -153,6 +156,43 @@ export default class Company {
                 }
             };
             return response;
+        }
+        response = {
+            status: ErrorCode.OK,
+            command: {
+                message: 'movie list imported'
+            }
+        };
+        return response;
+    }
+
+    public static async bulkImport
+    (request: CompanyBulkImportRequest): Promise<CompanyBulkImportResponse> {
+        let response: CompanyBulkImportResponse;
+        let host: string = process.env.KOFIC_APIHOST as string;
+        host += '/company/searchCompanyList.json';
+        host += `?key=${process.env.KOFIC_APIKEY as string}`;
+        host += `&itemPerPage=100`;
+        const apiResponse: any = await axios.get(host);
+        const cnt: number =
+            Math.ceil(apiResponse.data.companyListResult.totCnt / 100);
+        for (let i = 1; i <= cnt; i++) {
+            console.log(`${i} / ${cnt}`);
+            let newHost = host;
+            newHost += `&curPage=${i}`;
+            const apiResponse: any = await axios.get(newHost);
+            const list: CompanyListApiVo[] =
+                apiResponse.data.companyListResult.companyList;
+            const inserted: boolean = await this.dbInsertCompanyList(list);
+            if (!inserted) {
+                response = {
+                    status: ErrorCode.DB_QUERY_FAILED,
+                    command: {
+                        message: 'db failed'
+                    }
+                };
+                return response;
+            }
         }
         response = {
             status: ErrorCode.OK,

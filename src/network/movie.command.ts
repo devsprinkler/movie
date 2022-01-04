@@ -22,6 +22,12 @@ interface MovieImportListResponse extends DefaultResponse {
     }
 }
 
+interface MovieBulkImportResponse extends DefaultResponse {
+    command: {
+        message: string
+    }
+}
+
 interface MovieImportDetailResponse extends DefaultResponse {
     command: {
         message: string
@@ -33,6 +39,10 @@ interface MovieImportListRequest extends DefaultRequest {
         curPage: number,
         itemPerPage: number
     }
+}
+
+interface MovieBulkImportRequest extends DefaultRequest {
+    command: {}
 }
 
 interface MovieImportDetailRequest extends DefaultRequest {
