@@ -10,6 +10,12 @@ export default class People {
     (list: PeopleListApiVo[]): Promise<boolean> {
         try {
             for (let people of list) {
+                if (!people.peopleNmEn) {
+                    people.peopleNmEn = '';
+                }
+                if (!people.filmoNames) {
+                    people.filmoNames = '';
+                }
                 const sql: string = promiseMysql.format(`
                         INSERT INTO mymoviedb.tb_people
                         (people_cd, people_nm, people_nm_en, rep_role_nm,

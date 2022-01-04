@@ -26,4 +26,8 @@ mysql v5.7.36
 [GET] /company/list/:companyCd
 [GET] /company/search/:companyNm
 [GET] /company/detail/:companyCd
+
+[GET] /people/list/:peopleCd
+[GET] /people/search/:peopleNm
+[GET] /people/detail/:peopleCd
 ```
