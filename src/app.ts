@@ -6,9 +6,11 @@ import { Config } from './config/config';
 import { logger } from './utils/logger/logger';
 import router from './routes';
 import { ErrorCode } from "./const/errorcode";
+import 'reflect-metadata';
+import { createConnection } from "typeorm";
 
-export const mysqlPool: mysql.Pool = mysql.createPool(Config.Env.MySql.PROJECT);
-export const app = express();
+const mysqlPool: mysql.Pool = mysql.createPool(Config.Env.MySql.PROJECT);
+const app = express();
 
 const stream: StreamOptions = {
     // Use the http severity
@@ -28,6 +30,9 @@ app.get('/healthy', (req: Request, res: Response) => {
 });
 
 const port: number = Number(process.env.PORT);
-app.listen(port, () => {
+app.listen(port, async () => {
     logger.info(`Server listening on port ${port}`);
+    await createConnection(Config.Env.TypeOrm.MYSQL);
 });
+
+export { app, mysqlPool };

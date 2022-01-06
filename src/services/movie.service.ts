@@ -4,6 +4,9 @@ import { MySql } from "../utils/database/mysql";
 import axios from "axios";
 import { logger } from "../utils/logger/logger";
 import { ErrorCode } from '../const/errorcode';
+import {Connection, createConnection, getConnection} from 'typeorm';
+import { Config } from "../config/config";
+import { MovieEntity } from "../models/entities/movie.entity";
 
 export default class Movie {
     private static async dbInsertMovieList
@@ -45,7 +48,53 @@ export default class Movie {
         }
         return true;
     }
+
     public static async getList
+    (movieCd: string): Promise<MovieGetListResponse> {
+        let response: MovieGetListResponse;
+        try {
+            const conn = getConnection();
+            const list: MovieEntity[] = await conn
+                .getRepository(MovieEntity)
+                .createQueryBuilder('tb_movies')
+                .select([
+                    'tb_movies.movie_cd',
+                    'tb_movies.movie_nm',
+                    'tb_movies.movie_nm_en',
+                    'tb_movies.prdt_year',
+                    'tb_movies.open_dt',
+                    'tb_movies.type_nm',
+                    'tb_movies.prdt_stat_nm',
+                    'tb_movies.nation_alt',
+                    'tb_movies.genre_alt',
+                    'tb_movies.rep_nation_nm',
+                    'tb_movies.rep_genre_nm',
+                    'tb_movies.directors',
+                    'tb_movies.companies'
+                ])
+                .where(`tb_movies.movie_cd > :movieCd`, { movieCd: movieCd })
+                .limit(20)
+                .getMany()
+            response = {
+                status: ErrorCode.OK,
+                command: {
+                    movies: list
+                }
+            }
+            return response;
+        } catch (e) {
+            logger.error(`get list failed: ${e}`);
+            response = {
+                status: ErrorCode.DB_QUERY_FAILED,
+                command: {
+                    movies: []
+                }
+            };
+            return response;
+        }
+    }
+
+    public static async _getList
     (movieCd: string): Promise<MovieGetListResponse> {
         let response: MovieGetListResponse;
         const sql: string = promiseMysql.format(`

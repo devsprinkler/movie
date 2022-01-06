@@ -1,6 +1,6 @@
 interface MovieGetListResponse extends DefaultResponse {
     command: {
-        movies: MovieDto[]
+        movies: any
     };
 }
 
