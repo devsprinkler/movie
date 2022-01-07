@@ -1,15 +1,6 @@
-interface MovieDto {
-    movieCd: string,
-    movieNm: string,
-    movieNmEn: string,
+interface MovieDto extends MovieListApiVo {
     prdtYear: number,
     openDt: number,
-    typeNm: string,
-    prdtStatNm: string,
-    nationAlt: string,
-    genreAlt: string,
-    repNationNm: string,
-    repGenreNm: string,
     directors: string,
     companies: string
 }
@@ -18,8 +9,8 @@ interface MovieListApiVo {
     movieCd: string,
     movieNm: string,
     movieNmEn: string,
-    prdtYear: string,
-    openDt: string,
+    prdtYear: string | number,
+    openDt: string | number,
     typeNm: string,
     prdtStatNm: string,
     nationAlt: string,
@@ -28,8 +19,8 @@ interface MovieListApiVo {
     repGenreNm: string,
     directors: {
         peopleNm: string
-    }[],
-    companys: {
+    }[] | string,
+    companys?: {
         companyCd: string,
         companyNm: string
     }[]
@@ -37,22 +28,15 @@ interface MovieListApiVo {
 
 interface MovieDetailDto {
     movieCd: string,
-    movieNm: string,
-    movieNmEn: string,
     movieNmOg: string,
-    prdtYear: number,
     showTm: number,
-    openDt: number,
-    typeNm: string,
-    prdtStatNm: string,
     nations: string,
     genres: string,
     directors: string,
-    actors: any,
+    actors: string,
     companies: string,
-    showTypes: string,
     audits: string,
-    staffs: any
+    staffs: string
 }
 
 interface MovieDetailApiVo {

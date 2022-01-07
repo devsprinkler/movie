@@ -7,5 +7,7 @@ export enum ErrorCode {
     // Error code
     DB_CONN_FAILED = 1000,
     DB_QUERY_FAILED = 1001,
-    CONTENT_NOTFOUND = 2000
+    KOFIC_API_ERROR = 1002,
+    CONTENT_NOTFOUND = 2000,
+    INPUT_TOOSHORT = 2001
 }

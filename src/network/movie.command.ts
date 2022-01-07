@@ -1,51 +1,53 @@
-interface MovieGetListResponse extends DefaultResponse {
+import { MovieEntity } from "../models/entities/movie.entity";
+
+export interface MovieGetListResponse extends DefaultResponse {
     command: {
-        movies: any
+        movies: MovieEntity[]
     };
 }
 
-interface MovieSearchResponse extends DefaultResponse {
+export interface MovieSearchResponse extends DefaultResponse {
     command: {
-        movies: MovieDto[]
+        movies: MovieEntity[]
     };
 }
 
-interface MovieGetDetailResponse extends DefaultResponse {
+export interface MovieGetDetailResponse extends DefaultResponse {
     command: {
-        movie: MovieDetailDto | null
+        movie: MovieEntity | null
     }
 }
 
-interface MovieImportListResponse extends DefaultResponse {
-    command: {
-        message: string
-    }
-}
-
-interface MovieBulkImportResponse extends DefaultResponse {
+export interface MovieImportListResponse extends DefaultResponse {
     command: {
         message: string
     }
 }
 
-interface MovieImportDetailResponse extends DefaultResponse {
+export interface MovieBulkImportResponse extends DefaultResponse {
     command: {
         message: string
     }
 }
 
-interface MovieImportListRequest extends DefaultRequest {
+export interface MovieImportDetailResponse extends DefaultResponse {
+    command: {
+        message: string
+    }
+}
+
+export interface MovieImportListRequest extends DefaultRequest {
     command: {
         curPage: number,
         itemPerPage: number
     }
 }
 
-interface MovieBulkImportRequest extends DefaultRequest {
+export interface MovieBulkImportRequest extends DefaultRequest {
     command: {}
 }
 
-interface MovieImportDetailRequest extends DefaultRequest {
+export interface MovieImportDetailRequest extends DefaultRequest {
     command: {
         movieCd: string
     }

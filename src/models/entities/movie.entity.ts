@@ -1,58 +1,71 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+    Entity, Column, PrimaryColumn, UpdateDateColumn,
+    CreateDateColumn
+} from 'typeorm';
 
 @Entity('tb_movies')
 export class MovieEntity {
     @PrimaryColumn({
         length: 10,
-        type: 'varchar'
+        type: 'varchar',
+        name: 'movie_cd'
     })
-    movie_cd?: string;
+    movieCd?: string;
 
     @Column({
         length: 200,
-        type: 'varchar'
+        type: 'varchar',
+        name: 'movie_nm'
     })
-    movie_nm?: string;
+    movieNm?: string;
 
     @Column({
         length: 200,
-        type: 'varchar'
+        type: 'varchar',
+        name: 'movie_nm_en'
     })
-    movie_nm_en?: string;
+    movieNmEn?: string;
 
     @Column({
         length: 100,
-        type: 'varchar'
+        type: 'varchar',
+        default: '',
+        name: 'movie_nm_og'
     })
-    movie_nm_og?: string;
+    movieNmOg?: string;
 
     @Column({
-        type: 'int'
+        type: 'int',
+        name: 'prdt_year'
     })
-    prdt_year?: number;
+    prdtYear?: number;
 
     @Column({
         default: 0,
-        type: 'int'
+        type: 'int',
+        name: 'show_tm'
     })
-    show_tm?: number;
+    showTm?: number;
 
     @Column({
-        type: 'int'
+        type: 'int',
+        name: 'open_dt'
     })
-    open_dt?: number;
-
-    @Column({
-        length: 50,
-        type: 'varchar'
-    })
-    type_nm?: string;
+    openDt?: number;
 
     @Column({
         length: 50,
-        type: 'varchar'
+        type: 'varchar',
+        name: 'type_nm'
     })
-    prdt_stat_nm?: string;
+    typeNm?: string;
+
+    @Column({
+        length: 50,
+        type: 'varchar',
+        name: 'prdt_stat_nm'
+    })
+    prdtStatNm?: string;
 
     @Column({
         length: 100,
@@ -63,33 +76,38 @@ export class MovieEntity {
 
     @Column({
         length: 100,
-        type: 'varchar'
+        type: 'varchar',
+        name: 'nation_alt'
     })
-    nation_alt?: string;
+    nationAlt?: string;
 
     @Column({
         length: 200,
-        type: 'varchar'
+        type: 'varchar',
+        default: ''
     })
     genres?: string;
 
     @Column({
         length: 100,
-        type: 'varchar'
+        type: 'varchar',
+        name: 'genre_alt'
     })
-    genre_alt?: string;
+    genreAlt?: string;
 
     @Column({
         length: 50,
-        type: 'varchar'
+        type: 'varchar',
+        name: 'rep_nation_nm'
     })
-    rep_nation_nm?: string;
+    repNationNm?: string;
 
     @Column({
         length: 50,
-        type: 'varchar'
+        type: 'varchar',
+        name: 'rep_genre_nm'
     })
-    rep_genre_nm?: string;
+    repGenreNm?: string;
 
     @Column({
         length: 800,
@@ -105,16 +123,18 @@ export class MovieEntity {
 
     @Column({
         length: 2000,
-        type: 'varchar'
+        type: 'varchar',
+        default: ''
     })
     companies?: string;
 
     @Column({
         length: 200,
         default: '',
-        type: 'varchar'
+        type: 'varchar',
+        name: 'show_types'
     })
-    show_types?: string;
+    showTypes?: string;
 
     @Column({
         length: 200,
@@ -128,4 +148,10 @@ export class MovieEntity {
         nullable: true
     })
     staffs?: string | null;
+
+    @UpdateDateColumn()
+    update_dt?: Date;
+
+    @CreateDateColumn()
+    reg_dt?: Date;
 }

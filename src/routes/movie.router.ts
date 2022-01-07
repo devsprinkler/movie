@@ -1,5 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import Movie from "../services/movie.service";
+import {
+    MovieBulkImportRequest, MovieBulkImportResponse,
+    MovieGetDetailResponse,
+    MovieGetListResponse, MovieImportDetailRequest, MovieImportDetailResponse,
+    MovieImportListRequest, MovieImportListResponse,
+    MovieSearchResponse
+} from "../network/movie.command";
 
 const router = Router();
 
