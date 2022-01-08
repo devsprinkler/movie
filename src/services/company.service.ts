@@ -25,7 +25,7 @@ export default class Company {
                     company.filmoNames,
                     company.companyPartNames,
                     company.ceoNm,
-                    company.filmoNames,
+                    company.filmoNames
                 ]);
                 const sqlResults: SqlResults = await MySql.query(sql);
                 if (sqlResults.code === MySql.Const.FAIL) {
