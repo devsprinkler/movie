@@ -1,6 +1,4 @@
 import promiseMysql from "mysql2/promise";
-import { SqlResults } from "../utils/database/sql_results";
-import { MySql } from "../utils/database/mysql";
 import axios from "axios";
 import { logger } from "../utils/logger/logger";
 import { ErrorCode } from '../const/errorcode';
