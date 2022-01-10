@@ -1,58 +1,36 @@
-import promiseMysql from "mysql2/promise";
 import axios from "axios";
 import { logger } from "../utils/logger/logger";
 import { ErrorCode } from '../const/errorcode';
+import { getCompanyRepository } from "../models/repositories/company.repository";
+import { CompanyEntity } from "../models/entities/company.entity";
+import {
+    CompanyBulkImportRequest, CompanyBulkImportResponse,
+    CompanyGetDetailResponse, CompanyGetListResponse,
+    CompanyImportDetailRequest, CompanyImportDetailResponse,
+    CompanyImportListRequest, CompanyImportListResponse,
+    CompanySearchResponse
+} from "../network/company.command";
+import { UpdateResult } from "typeorm";
 
 export default class Company {
     private static async dbInsertCompanyList
     (list: CompanyListApiVo[]): Promise<boolean> {
         try {
-            for (let company of list) {
-                const sql: string = promiseMysql.format(`
-                    INSERT INTO mymoviedb.tb_companies
-                    (company_cd, company_nm, company_nm_en, company_part_names,
-                     ceo_nm, filmo_names)
-                    VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
-                    UPDATE company_part_names = ?, ceo_nm = ?, filmo_names = ?
-                `, [
-                    company.companyCd,
-                    company.companyNm,
-                    company.companyNmEn,
-                    company.companyPartNames,
-                    company.ceoNm,
-                    company.filmoNames,
-                    company.companyPartNames,
-                    company.ceoNm,
-                    company.filmoNames
-                ]);
-                const sqlResults: SqlResults = await MySql.query(sql);
-                if (sqlResults.code === MySql.Const.FAIL) {
-                    logger.error(`insert failed - ${JSON.stringify(company)}`);
-                    return false;
-                }
-            }
+            const res: CompanyEntity[] =
+                await getCompanyRepository().createCompanies(list);
+            return true;
         } catch(err) {
-            logger.error(err);
+            logger.error(`company create failed: ${err}`);
             return false;
         }
-        return true;
     }
 
     public static async getList
     (companyCd: string): Promise<CompanyGetListResponse> {
         let response: CompanyGetListResponse;
-        const sql: string = promiseMysql.format(`
-            SELECT company_cd as companyCd, company_nm as companyNm,
-            company_nm_en as companyNmEn,
-            company_part_names as companyPartNames, ceo_nm as ceoNm,
-            filmo_names as filmoNames
-            FROM mymoviedb.tb_companies
-            WHERE company_cd > ?
-            LIMIT 20
-        `, [companyCd]);
-        const sqlResults: SqlResults = await MySql.query(sql);
-        if (sqlResults.code === MySql.Const.SUCCESS) {
-            const companies: CompanyDto[] = sqlResults.data;
+        try {
+            const companies: CompanyEntity[] =
+                await getCompanyRepository().findCompanies(companyCd);
             response = {
                 status: ErrorCode.OK,
                 command: {
@@ -60,29 +38,23 @@ export default class Company {
                 }
             };
             return response;
+        } catch (err) {
+            logger.error(`company find failed: ${err}`);
+            response = {
+                status: ErrorCode.DB_QUERY_FAILED,
+                command: {
+                    companies: []
+                }
+            };
+            return response;
         }
-        response = {
-            status: ErrorCode.DB_QUERY_FAILED,
-            command: {
-                companies: []
-            }
-        };
-        return response;
     }
 
     public static async search(companyNm: string): Promise<CompanySearchResponse> {
         let response: CompanySearchResponse;
-        const sql: string = promiseMysql.format(`
-            SELECT company_cd as companyCd, company_nm as companyNm,
-            company_nm_en as companyNmEn,
-            company_part_names as companyPartNames, ceo_nm as ceoNm,
-            filmo_names as filmoNames
-            FROM mymoviedb.tb_companies
-            WHERE company_nm LIKE '%${companyNm}%' OR company_nm_en LIKE '%${companyNm}%'
-        `);
-        const sqlResults: SqlResults = await MySql.query(sql);
-        if (sqlResults.code === MySql.Const.SUCCESS) {
-            const companies: CompanyDto[] = sqlResults.data;
+        try {
+            const companies: CompanyEntity[] =
+                await getCompanyRepository().findCompanyByName(companyNm);
             response = {
                 status: ErrorCode.OK,
                 command: {
@@ -90,33 +62,33 @@ export default class Company {
                 }
             };
             return response;
+        } catch (err) {
+            logger.error(`company search failed: ${err}`);
+            response = {
+                status: ErrorCode.DB_QUERY_FAILED,
+                command: {
+                    companies: []
+                }
+            };
+            return response;
         }
-        response = {
-            status: ErrorCode.DB_QUERY_FAILED,
-            command: {
-                companies: []
-            }
-        };
-        return response;
     }
 
     public static async getDetail
     (companyCd: string): Promise<CompanyGetDetailResponse> {
         let response: CompanyGetDetailResponse;
-        const sql: string = promiseMysql.format(`
-            SELECT company_cd as companyCd, company_nm as companyNm,
-                   company_nm_en as companyNmEn,
-                   company_part_names as companyPartNames, ceo_nm as ceoNm,
-                   parts, filmos
-            FROM mymoviedb.tb_companies
-            WHERE company_cd = ?
-            LIMIT 1
-        `, [companyCd]);
-        const sqlResults: SqlResults = await MySql.query(sql);
-        if (sqlResults.code === MySql.Const.SUCCESS) {
-            const company: CompanyDetailDto = sqlResults.data[0];
-            company.parts = `${company.parts}`;
-            company.filmos = `${company.filmos}`;
+        try {
+            const company: CompanyEntity | undefined =
+                await getCompanyRepository().getDetail(companyCd);
+            if (!company) {
+                response = {
+                    status: ErrorCode.CONTENT_NOTFOUND,
+                    command: {
+                        company: null
+                    }
+                }
+                return response;
+            }
             response = {
                 status: ErrorCode.OK,
                 command: {
@@ -124,14 +96,16 @@ export default class Company {
                 }
             };
             return response;
+        } catch (err) {
+            logger.error(`find company failed: ${err}`);
+            response = {
+                status: ErrorCode.DB_QUERY_FAILED,
+                command: {
+                    company: null
+                }
+            };
+            return response;
         }
-        response = {
-            status: ErrorCode.DB_QUERY_FAILED,
-            command: {
-                company: null
-            }
-        };
-        return response;
     }
 
     public static async importList
@@ -209,31 +183,37 @@ export default class Company {
         host += `?key=${process.env.KOFIC_APIKEY as string}`;
         host += `&companyCd=${request.command.companyCd as string}`;
         const apiResponse: any = await axios.get(host);
-        const detail: CompanyDetailApiVo =
+        const detail: CompanyDetailApiVo | undefined =
             apiResponse.data.companyInfoResult.companyInfo;
+        if (!detail) {
+            response = {
+                status: ErrorCode.CONTENT_NOTFOUND,
+                command: {
+                    message: 'detail not found'
+                }
+            };
+            return response;
+        }
+        const detailDto: CompanyDetailDto = {
+            companyCd: detail.companyCd,
+            companyNm: detail.companyNm,
+            companyNmEn: detail.companyNmEn,
+            ceoNm: detail.ceoNm,
+            parts: JSON.stringify(detail.parts),
+            filmos: JSON.stringify(detail.filmos)
+        }
         try {
-            const sql: string = promiseMysql.format(`
-                UPDATE mymoviedb.tb_companies
-                SET parts = ?, filmos = ?
-                WHERE company_cd = ?
-            `, [
-                JSON.stringify(detail.parts),
-                JSON.stringify(detail.filmos),
-                detail.companyCd
-            ]);
-            const sqlResults: SqlResults = await MySql.query(sql);
-            if (sqlResults.code === MySql.Const.FAIL) {
-                logger.error(`insert failed - ${JSON.stringify(detail)}`);
-                response = {
-                    status: ErrorCode.DB_QUERY_FAILED,
-                    command: {
-                        message: 'db failed'
-                    }
-                };
-                return response;
-            }
+            const updated: UpdateResult =
+                await getCompanyRepository().patchDetail(detailDto);
+            response = {
+                status: ErrorCode.OK,
+                command: {
+                    message: 'succeeded'
+                }
+            };
+            return response;
         } catch(err) {
-            logger.error(err);
+            logger.error(`company update failed: ${err}`);
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
@@ -242,12 +222,5 @@ export default class Company {
             };
             return response;
         }
-        response = {
-            status: ErrorCode.OK,
-            command: {
-                message: 'movie detail imported'
-            }
-        };
-        return response;
     }
 }

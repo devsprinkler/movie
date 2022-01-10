@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import express, {json, Request, Response} from 'express';
 import morgan, {StreamOptions} from 'morgan';
-import mysql from 'mysql2/promise';
 import { Config } from './config/config';
 import { logger } from './utils/logger/logger';
 import router from './routes';
@@ -9,7 +8,6 @@ import { ErrorCode } from "./const/errorcode";
 import 'reflect-metadata';
 import { createConnection } from "typeorm";
 
-const mysqlPool: mysql.Pool = mysql.createPool(Config.Env.MySql.PROJECT);
 const app = express();
 
 const stream: StreamOptions = {
@@ -35,4 +33,4 @@ app.listen(port, async () => {
     await createConnection(Config.Env.TypeOrm.MYSQL);
 });
 
-export { app, mysqlPool };
+export { app };

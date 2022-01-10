@@ -1,51 +1,53 @@
-interface CompanyGetListResponse extends DefaultResponse {
+import { CompanyEntity } from "../models/entities/company.entity";
+
+export interface CompanyGetListResponse extends DefaultResponse {
     command: {
-        companies: CompanyDto[]
+        companies: CompanyEntity[]
     };
 }
 
-interface CompanySearchResponse extends DefaultResponse {
+export interface CompanySearchResponse extends DefaultResponse {
     command: {
-        companies: CompanyDto[]
+        companies: CompanyEntity[]
     };
 }
 
-interface CompanyGetDetailResponse extends DefaultResponse {
+export interface CompanyGetDetailResponse extends DefaultResponse {
     command: {
-        company: CompanyDetailDto | null
+        company: CompanyEntity | null
     }
 }
 
-interface CompanyImportListResponse extends DefaultResponse {
-    command: {
-        message: string
-    }
-}
-
-interface CompanyBulkImportResponse extends DefaultResponse {
+export interface CompanyImportListResponse extends DefaultResponse {
     command: {
         message: string
     }
 }
 
-interface CompanyImportDetailResponse extends DefaultResponse {
+export interface CompanyBulkImportResponse extends DefaultResponse {
     command: {
         message: string
     }
 }
 
-interface CompanyImportListRequest extends DefaultRequest {
+export interface CompanyImportDetailResponse extends DefaultResponse {
+    command: {
+        message: string
+    }
+}
+
+export interface CompanyImportListRequest extends DefaultRequest {
     command: {
         curPage: number,
         itemPerPage: number
     }
 }
 
-interface CompanyBulkImportRequest extends DefaultRequest {
+export interface CompanyBulkImportRequest extends DefaultRequest {
     command: {}
 }
 
-interface CompanyImportDetailRequest extends DefaultRequest {
+export interface CompanyImportDetailRequest extends DefaultRequest {
     command: {
         companyCd: string
     }

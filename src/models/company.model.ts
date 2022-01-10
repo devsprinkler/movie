@@ -1,10 +1,5 @@
-interface CompanyDto {
-    companyCd: string,
-    companyNm: string,
-    companyNmEn: string,
-    companyPartNames: string,
-    ceoNm: string,
-    filmoNames: string
+interface CompanyDto extends CompanyListApiVo {
+
 }
 
 interface CompanyListApiVo {
@@ -16,11 +11,7 @@ interface CompanyListApiVo {
     filmoNames: string
 }
 
-interface CompanyDetailDto {
-    companyCd: string,
-    companyNm: string,
-    companyNmEn: string,
-    ceoNm: string,
+interface CompanyDetailDto extends CompanyDetailApiVo {
     parts: string,
     filmos: string
 }
@@ -32,10 +23,10 @@ interface CompanyDetailApiVo {
     ceoNm: string,
     parts: {
         "companyPartNm": string
-    }[],
+    }[] | string,
     filmos: {
         "movieCd": string,
         "movieNm": string,
         "companyPartNm": string
-    }[]
+    }[] | string
 }

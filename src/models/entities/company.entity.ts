@@ -6,7 +6,7 @@ import {
 @Entity('tb_companies')
 export class CompanyEntity {
     @PrimaryColumn({
-        length: 10,
+        length: 8,
         type: 'varchar',
         name: 'company_cd'
     })
@@ -28,17 +28,23 @@ export class CompanyEntity {
 
     @Column({
         type: 'varchar',
-        length: 200,
+        length: 1000,
         name: 'company_part_names'
     })
     companyPartNames?: string;
 
     @Column({
-        length: 200,
+        length: 100,
         type: 'varchar',
         name: 'ceo_nm'
     })
     ceoNm?: string;
+
+    @Column({
+        type: 'text',
+        nullable: true
+    })
+    parts?: string | null;
 
     @Column({
         type: 'varchar',
@@ -46,6 +52,12 @@ export class CompanyEntity {
         length: 2000
     })
     filmoNames?: string;
+
+    @Column({
+        type: 'text',
+        nullable: true
+    })
+    filmos?: string | null;
 
     @UpdateDateColumn()
     update_dt?: Date;

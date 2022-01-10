@@ -1,5 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import Company from "../services/company.service";
+import {
+    CompanyBulkImportRequest, CompanyBulkImportResponse,
+    CompanyGetDetailResponse, CompanyGetListResponse,
+    CompanyImportDetailRequest, CompanyImportDetailResponse,
+    CompanyImportListRequest, CompanyImportListResponse, CompanySearchResponse
+} from "../network/company.command";
 
 const router = Router();
 
