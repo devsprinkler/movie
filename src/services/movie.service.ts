@@ -166,8 +166,7 @@ export default class Movie {
         return response;
     }
 
-    public static async bulkImport
-    (request: MovieBulkImportRequest): Promise<MovieBulkImportResponse> {
+    public static async bulkImport(): Promise<MovieBulkImportResponse> {
         let response: MovieImportDetailResponse;
         let host: string = process.env.KOFIC_APIHOST as string;
         host += '/movie/searchMovieList.json';
@@ -235,6 +234,7 @@ export default class Movie {
                         message: 'succeeded'
                     }
                 };
+                logger.info(updateRes);
                 return response;
             } catch (err) {
                 logger.error(`movie detail update failed: ${err}`);
@@ -247,11 +247,11 @@ export default class Movie {
                 return response;
             }
         } catch (err) {
-            logger.error(`kofic api erorr: ${err}`);
+            logger.error(`KOFIC API erorr: ${err}`);
             response = {
                 status: ErrorCode.KOFIC_API_ERROR,
                 command: {
-                    message: 'kofic api error'
+                    message: 'KOFIC API error'
                 }
             };
             return response;

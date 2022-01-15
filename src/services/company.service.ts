@@ -4,11 +4,10 @@ import { ErrorCode } from '../const/errorcode';
 import { getCompanyRepository } from "../models/repositories/company.repository";
 import { CompanyEntity } from "../models/entities/company.entity";
 import {
-    CompanyBulkImportRequest, CompanyBulkImportResponse,
-    CompanyGetDetailResponse, CompanyGetListResponse,
-    CompanyImportDetailRequest, CompanyImportDetailResponse,
-    CompanyImportListRequest, CompanyImportListResponse,
-    CompanySearchResponse
+    CompanyBulkImportResponse, CompanyGetDetailResponse,
+    CompanyGetListResponse, CompanyImportDetailRequest,
+    CompanyImportDetailResponse, CompanyImportListRequest,
+    CompanyImportListResponse, CompanySearchResponse
 } from "../network/company.command";
 import { UpdateResult } from "typeorm";
 
@@ -18,9 +17,10 @@ export default class Company {
         try {
             const res: CompanyEntity[] =
                 await getCompanyRepository().createCompanies(list);
+            logger.info(res);
             return true;
         } catch(err) {
-            logger.error(`company create failed: ${err}`);
+            logger.error(`Company create failed: ${err}`);
             return false;
         }
     }
@@ -39,7 +39,7 @@ export default class Company {
             };
             return response;
         } catch (err) {
-            logger.error(`company find failed: ${err}`);
+            logger.error(`Company find failed: ${err}`);
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
@@ -63,7 +63,7 @@ export default class Company {
             };
             return response;
         } catch (err) {
-            logger.error(`company search failed: ${err}`);
+            logger.error(`Company search failed: ${err}`);
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
@@ -97,7 +97,7 @@ export default class Company {
             };
             return response;
         } catch (err) {
-            logger.error(`find company failed: ${err}`);
+            logger.error(`Find company failed: ${err}`);
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
@@ -124,7 +124,7 @@ export default class Company {
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
-                    message: 'db failed'
+                    message: 'DB failed'
                 }
             };
             return response;
@@ -132,14 +132,13 @@ export default class Company {
         response = {
             status: ErrorCode.OK,
             command: {
-                message: 'movie list imported'
+                message: 'Movie list imported'
             }
         };
         return response;
     }
 
-    public static async bulkImport
-    (request: CompanyBulkImportRequest): Promise<CompanyBulkImportResponse> {
+    public static async bulkImport(): Promise<CompanyBulkImportResponse> {
         let response: CompanyBulkImportResponse;
         let host: string = process.env.KOFIC_APIHOST as string;
         host += '/company/searchCompanyList.json';
@@ -160,7 +159,7 @@ export default class Company {
                 response = {
                     status: ErrorCode.DB_QUERY_FAILED,
                     command: {
-                        message: 'db failed'
+                        message: 'DB failed'
                     }
                 };
                 return response;
@@ -169,7 +168,7 @@ export default class Company {
         response = {
             status: ErrorCode.OK,
             command: {
-                message: 'movie list imported'
+                message: 'Movie list imported'
             }
         };
         return response;
@@ -189,7 +188,7 @@ export default class Company {
             response = {
                 status: ErrorCode.CONTENT_NOTFOUND,
                 command: {
-                    message: 'detail not found'
+                    message: 'Detail not found'
                 }
             };
             return response;
@@ -205,19 +204,20 @@ export default class Company {
         try {
             const updated: UpdateResult =
                 await getCompanyRepository().patchDetail(detailDto);
+            logger.info(updated);
             response = {
                 status: ErrorCode.OK,
                 command: {
-                    message: 'succeeded'
+                    message: 'Succeeded'
                 }
             };
             return response;
         } catch(err) {
-            logger.error(`company update failed: ${err}`);
+            logger.error(`Company update failed: ${err}`);
             response = {
                 status: ErrorCode.DB_QUERY_FAILED,
                 command: {
-                    message: 'db failed'
+                    message: 'DB failed'
                 }
             };
             return response;

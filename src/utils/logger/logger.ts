@@ -11,9 +11,9 @@ const logFormat = printf(info => {
 const logger = winston.createLogger({
     format: combine(
         timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss',
+            format: 'YYYY-MM-DD HH:mm:ss'
         }),
-        logFormat,
+        logFormat
     ),
     transports: [
         new winstonDaily({
@@ -31,15 +31,15 @@ const logger = winston.createLogger({
             filename: `%DATE%.error.log`,
             maxFiles: 30,
             zippedArchive: true,
-        }),
-    ],
+        })
+    ]
 });
 
 if (process.env.SERVER_ENV !== 'production') {
     logger.add(new winston.transports.Console({
         format: winston.format.combine(
             winston.format.colorize(),
-            winston.format.simple(),
+            winston.format.simple()
         )
     }));
 }
