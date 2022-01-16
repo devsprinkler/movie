@@ -1,11 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import Movie from "../services/movie.service";
 import {
-    MovieBulkImportRequest, MovieBulkImportResponse,
-    MovieGetDetailResponse,
-    MovieGetListResponse, MovieImportDetailRequest, MovieImportDetailResponse,
-    MovieImportListRequest, MovieImportListResponse,
-    MovieSearchResponse
+    MovieBulkImportResponse, MovieGetDetailResponse,
+    MovieGetListResponse, MovieImportDetailRequest,
+    MovieImportDetailResponse, MovieImportListRequest,
+    MovieImportListResponse, MovieSearchResponse
 } from "../network/movie.command";
 
 const router = Router();
@@ -40,8 +39,7 @@ router.post('/import/list',
 
 router.post('/import/bulk',
     async (req: Request, res: Response, next: NextFunction) => {
-    const request: MovieBulkImportRequest = req.body;
-    const response: MovieBulkImportResponse = await Movie.bulkImport(request);
+    const response: MovieBulkImportResponse = await Movie.bulkImport();
     return res.status(200).json(response);
 });
 

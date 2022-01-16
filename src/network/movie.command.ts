@@ -43,24 +43,8 @@ export interface MovieImportListRequest extends DefaultRequest {
     }
 }
 
-export interface MovieBulkImportRequest extends DefaultRequest {
-    command: {}
-}
-
 export interface MovieImportDetailRequest extends DefaultRequest {
     command: {
         movieCd: string
     }
 }
-
-// interface MovieGetListRequest extends DefaultRequest {
-//     command: {
-//         movieCd: string
-//     }
-// }
-//
-// interface MovieSearchRequest extends DefaultRequest {
-//     command: {
-//         movieNm: string
-//     };
-// }

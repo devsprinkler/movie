@@ -43,10 +43,6 @@ export interface CompanyImportListRequest extends DefaultRequest {
     }
 }
 
-export interface CompanyBulkImportRequest extends DefaultRequest {
-    command: {}
-}
-
 export interface CompanyImportDetailRequest extends DefaultRequest {
     command: {
         companyCd: string
