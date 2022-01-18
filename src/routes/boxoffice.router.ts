@@ -11,7 +11,7 @@ router.post('/import/daily',
     const request: BoxOfficeImportRequest = req.body;
     const response: BoxOfficeImportResponse = await BoxOffice.import(request);
     return res.status(200).json(response);
-})
+});
 
 router.post('/import/weekly',
     async (req: Request, res: Response, next: NextFunction) => {
@@ -19,6 +19,16 @@ router.post('/import/weekly',
     const response: BoxOfficeImportWeeklyResponse =
         await BoxOffice.importWeekly(request);
     return res.status(200).json(response);
-})
+});
+
+router.get('/daily',
+    (req: Request, res: Response, next: NextFunction) => {
+    // todo: impl
+});
+
+router.get('/weekly',
+    (req: Request, res: Response, next: NextFunction) => {
+   // todo: impl
+});
 
 export default router;
